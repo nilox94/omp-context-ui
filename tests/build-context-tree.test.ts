@@ -1,14 +1,14 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, mock } from "bun:test";
 
-vi.mock("@oh-my-pi/pi-agent-core/compaction", () => ({
+mock.module("@oh-my-pi/pi-agent-core/compaction", () => ({
   estimateTokens: () => 12,
 }));
 
-vi.mock("@oh-my-pi/pi-natives", () => ({
+mock.module("@oh-my-pi/pi-natives", () => ({
   countTokens: (fragments: string[]) => fragments.join("").length,
 }));
 
-vi.mock("@oh-my-pi/pi-coding-agent/modes/utils/context-usage", () => ({
+mock.module("@oh-my-pi/pi-coding-agent/modes/utils/context-usage", () => ({
   computeContextBreakdown: (session: {
     model?: { contextWindow?: number };
   }) => ({

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 import type { ContextTree } from "../src/context-tree/types.js";
 import { TreeNavigator } from "../src/context-tree/tree-navigator.js";
 

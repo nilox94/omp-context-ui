@@ -8,7 +8,7 @@
     "noEmit": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "types": ["vitest/globals"]
+    "types": ["bun-types"]
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"]
 }

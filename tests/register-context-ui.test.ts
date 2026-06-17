@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 import {
   __resetContextUiRegistrationForTests,
   registerContextUiCommand,
@@ -10,14 +10,14 @@ describe("registerContextUiCommand", () => {
   });
 
   it("registers /context-ui only when hasUI is true", () => {
-    const registerCommand = vi.fn();
-    const pi = { registerCommand, on: vi.fn() } as never;
+    const registerCommand = mock();
+    const pi = { registerCommand, on: mock() } as never;
 
     registerContextUiCommand(pi, { hasUI: false });
     expect(registerCommand).not.toHaveBeenCalled();
 
     registerContextUiCommand(pi, { hasUI: true });
-    expect(registerCommand).toHaveBeenCalledOnce();
+    expect(registerCommand).toHaveBeenCalledTimes(1);
     expect(registerCommand).toHaveBeenCalledWith(
       "context-ui",
       expect.objectContaining({
@@ -28,12 +28,12 @@ describe("registerContextUiCommand", () => {
   });
 
   it("does not register twice when called repeatedly with hasUI", () => {
-    const registerCommand = vi.fn();
-    const pi = { registerCommand, on: vi.fn() } as never;
+    const registerCommand = mock();
+    const pi = { registerCommand, on: mock() } as never;
 
     registerContextUiCommand(pi, { hasUI: true });
     registerContextUiCommand(pi, { hasUI: true });
 
-    expect(registerCommand).toHaveBeenCalledOnce();
+    expect(registerCommand).toHaveBeenCalledTimes(1);
   });
 });
