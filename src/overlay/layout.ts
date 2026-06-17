@@ -2,8 +2,8 @@ export interface ContextInspectorLayoutLabels {
   title: string;
   treeLabel: string;
   previewLabel: string;
-  treeBody: string;
-  previewBody: string;
+  treeLines: string[];
+  previewLines: string[];
   footer: string;
 }
 
@@ -22,6 +22,19 @@ function padColumn(text: string, width: number): string {
   return truncate(text, width).padEnd(width, " ");
 }
 
+function pairColumns(
+  treeLine: string,
+  previewLine: string,
+  treeWidth: number,
+  previewWidth: number,
+  safeWidth: number,
+): string {
+  return truncate(
+    padColumn(treeLine, treeWidth) + SEPARATOR + padColumn(previewLine, previewWidth),
+    safeWidth,
+  );
+}
+
 export function renderContextInspectorLayout(width: number, labels: ContextInspectorLayoutLabels): string[] {
   const safeWidth = Math.max(1, width);
   const separatorWidth = SEPARATOR.length;
@@ -30,16 +43,13 @@ export function renderContextInspectorLayout(width: number, labels: ContextInspe
   const previewWidth = Math.max(PREVIEW_MIN_WIDTH, available - treeWidth - separatorWidth);
 
   const headerLine = truncate(labels.title, safeWidth);
-  const bodyLine = truncate(
-    padColumn(labels.treeLabel, treeWidth) + SEPARATOR + padColumn(labels.previewLabel, previewWidth),
-    safeWidth,
-  );
-  const contentLine = truncate(
-    padColumn(labels.treeBody, treeWidth) + SEPARATOR + padColumn(labels.previewBody, previewWidth),
-    safeWidth,
+  const bodyLine = pairColumns(labels.treeLabel, labels.previewLabel, treeWidth, previewWidth, safeWidth);
+  const rowCount = Math.max(labels.treeLines.length, labels.previewLines.length, 1);
+  const contentLines = Array.from({ length: rowCount }, (_, index) =>
+    pairColumns(labels.treeLines[index] ?? "", labels.previewLines[index] ?? "", treeWidth, previewWidth, safeWidth),
   );
   const footerLine = truncate(labels.footer, safeWidth);
   const rule = "─".repeat(safeWidth);
 
-  return [headerLine, rule, bodyLine, contentLine, rule, footerLine];
+  return [headerLine, rule, bodyLine, ...contentLines, rule, footerLine];
 }

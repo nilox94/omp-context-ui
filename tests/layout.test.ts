@@ -5,20 +5,22 @@ const labels = {
   title: "Context Inspector",
   treeLabel: "Tree",
   previewLabel: "Preview",
-  treeBody: "(no rows yet)",
-  previewBody: "(select a row)",
-  footer: "↑/↓ move · ←/→ expand · Esc close",
+  treeLines: ["System prompt  ~1k", "Messages  ~142k"],
+  previewLines: ["(select a row)", ""],
+  footer: "Context: 72% · ~144k / 200000 · Esc close",
 };
 
 describe("renderContextInspectorLayout", () => {
-  it("renders empty tree, preview, and footer regions", () => {
+  it("renders tree rows, preview column, and footer", () => {
     const lines = renderContextInspectorLayout(80, labels);
     const text = lines.join("\n");
 
     expect(text).toContain("Tree");
     expect(text).toContain("Preview");
-    expect(text).toContain("Esc");
-    expect(text).toContain("(no rows yet)");
+    expect(text).toContain("System prompt");
+    expect(text).toContain("Messages");
     expect(text).toContain("(select a row)");
+    expect(text).toContain("Context: 72%");
+    expect(text).toContain("Esc");
   });
 });
