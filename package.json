@@ -1,0 +1,25 @@
+{
+  "name": "omp-context-ui",
+  "version": "0.1.0",
+  "description": "Interactive context window inspector for oh-my-pi",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/nilox94/omp-context-ui",
+  "omp": {
+    "extensions": ["./src/index.ts"]
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@oh-my-pi/pi-coding-agent": ">=16.0.0 <17.0.0"
+  },
+  "devDependencies": {
+    "@oh-my-pi/pi-coding-agent": "16.0.3",
+    "@oh-my-pi/pi-tui": "16.0.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9"
+  }
+}
