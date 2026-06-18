@@ -1,9 +1,5 @@
-import { describe, expect, it, mock } from "bun:test";
-
-mock.module("@oh-my-pi/pi-agent-core", () => ({
-	estimateTokens: () => 12,
-}));
-
+import { describe, expect, it } from "bun:test";
+import "./setup/mock-pi-agent-core";
 import { classifyBlocks } from "@/context-tree/classify-blocks";
 
 describe("classifyBlocks", () => {

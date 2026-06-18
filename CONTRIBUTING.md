@@ -70,6 +70,8 @@ If formatting still looks wrong, check user-level Zed settings for a TypeScript 
 
 ## Testing
 
+When a test needs mocked `@oh-my-pi/*` modules, register mocks in `tests/setup/` and import those setup files **before** the module under test (setup imports first, then `@/` imports). Do not interleave `mock.module()` calls with test code.
+
 Pure logic is covered by unit tests — add or update them for any behavior assertable without a live session.
 Overlay rendering, slash commands, and session mutation depend on runtime surfaces unit tests don't cover, so verify them manually:
 
