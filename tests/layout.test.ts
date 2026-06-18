@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { renderContextInspectorLayout } from "../src/overlay/layout";
+import { renderContextInspectorLayout } from "@/overlay/layout";
 
 const labels = {
 	title: "Context Inspector",

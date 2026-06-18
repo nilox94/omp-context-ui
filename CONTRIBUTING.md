@@ -43,18 +43,14 @@ Match the surrounding code; follow the `context-tree/` vs `overlay/` boundaries 
 Imports should stay short and obvious:
 
 - **Same directory** → relative `./` (never `@/`)
-- **Different directory under `src/`** → `@/` (configured in `package.json` `imports` and `tsconfig.json` `paths`)
-- **Tests importing `src/`** → relative `../src/...`
+- **Different directory** → `@/` (configured in `package.json` `imports` and `tsconfig.json` `paths`)
 
 ```ts
 // same directory (context-tree/)
 import { classifyBlocks } from "./classify-blocks";
 
-// different directory (overlay → context-tree)
+// different directory (overlay → context-tree, tests → context-tree)
 import { buildContextTree } from "@/context-tree/build-context-tree";
-
-// tests → src
-import { classifyBlocks } from "../src/context-tree/classify-blocks";
 ```
 
 Prefer **package-root imports** from `@oh-my-pi/*` when types are re-exported there; use subpaths only when needed (e.g. `registry/agent-registry`, `modes/utils/context-usage`):

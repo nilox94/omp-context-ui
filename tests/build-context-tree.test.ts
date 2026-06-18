@@ -59,7 +59,7 @@ mock.module("@oh-my-pi/pi-coding-agent/modes/utils/context-usage", () => ({
 	estimateToolSchemaTokens: () => 8,
 }));
 
-import { buildContextTree } from "../src/context-tree/build-context-tree";
+import { buildContextTree } from "@/context-tree/build-context-tree";
 
 function makeSession(overrides: {
 	systemPrompt?: string[];

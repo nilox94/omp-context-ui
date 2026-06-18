@@ -4,7 +4,7 @@ mock.module("@oh-my-pi/pi-agent-core", () => ({
 	estimateTokens: () => 12,
 }));
 
-import { classifyBlocks } from "../src/context-tree/classify-blocks";
+import { classifyBlocks } from "@/context-tree/classify-blocks";
 
 describe("classifyBlocks", () => {
 	it("splits assistant content into typed blocks in transcript order", () => {

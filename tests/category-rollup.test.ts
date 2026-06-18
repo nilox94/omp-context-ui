@@ -5,7 +5,7 @@ import {
 	formatApproxTokens,
 	formatCategoryRow,
 	formatContextFooter,
-} from "../src/overlay/category-rollup";
+} from "@/overlay/category-rollup";
 
 describe("formatApproxTokens", () => {
 	it("prefixes counts with tilde", () => {
