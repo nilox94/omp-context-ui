@@ -1,123 +1,46 @@
-import { estimateMessageTokens } from "./estimate-message-tokens.js";
-import type { BlockKind, ContextBlockNode } from "./types.js";
+[src/context-tree/classify-blocks.ts#5F61]
+1:import { estimateMessageTokens } from "./estimate-message-tokens";
+2:import type { BlockKind, ContextBlockNode } from "./types";
+3:
+4:export type ContextSessionMessage = {
+5:  role: string;
+6:  content?: unknown;
+7:  customType?: string;
+8:  toolName?: string;
+9:};
+10:
+11:interface ContentBlock {
+12:  type: string;
+13:  text?: string;
+14:  thinking?: string;
+15:  name?: string;
+16:}
+17:
+18:function estimateBlockTokens(message: ContextSessionMessage, blockIndex: number): number {
+19:  const role = message.role;
+20-25:  if (role === "assistant") { .. }
+26:
+27-32:  if (role === "toolResult") { .. }
+33:
+34-42:  if (role === "user" || role === "developer") { .. }
+43:
+44:  return blockIndex === 0 ? estimateMessageTokens(message) : 0;
+45:}
+46:
+47-51:function blockLabel(blockType: BlockKind, toolName?: string): string { .. }
+52:
+53:function toBlockNode(
+54:  message: ContextSessionMessage,
+55:  messageIndex: number,
+56:  blockIndex: number,
+57:  blockType: BlockKind,
+58:  toolName?: string,
+59-67:): ContextBlockNode { .. }
+68:
+69-83:function classifyAssistantBlocks(message: ContextSessionMessage, messageIndex: number): ContextBlockNode[] { .. }
+84:
+85-97:function classifyUserLikeBlocks(message: ContextSessionMessage, messageIndex: number): ContextBlockNode[] { .. }
+98:
+99-123:export function classifyBlocks(message: ContextSessionMessage, messageIndex: number): ContextBlockNode[] { .. }
 
-export type ContextSessionMessage = {
-  role: string;
-  content?: unknown;
-  customType?: string;
-  toolName?: string;
-};
-
-interface ContentBlock {
-  type: string;
-  text?: string;
-  thinking?: string;
-  name?: string;
-}
-
-function estimateBlockTokens(message: ContextSessionMessage, blockIndex: number): number {
-  const role = message.role;
-  if (role === "assistant") {
-    const content = message.content as ContentBlock[] | undefined;
-    const block = content?.[blockIndex];
-    if (!block) return 0;
-    return estimateMessageTokens({ ...message, content: [block] });
-  }
-
-  if (role === "toolResult") {
-    const content = message.content as ContentBlock[] | undefined;
-    const block = content?.[blockIndex];
-    if (!block) return 0;
-    return estimateMessageTokens({ ...message, content: [block] });
-  }
-
-  if (role === "user" || role === "developer") {
-    const content = message.content;
-    if (typeof content === "string") {
-      return blockIndex === 0 ? estimateMessageTokens(message) : 0;
-    }
-    const block = (content as ContentBlock[] | undefined)?.[blockIndex];
-    if (!block) return 0;
-    return estimateMessageTokens({ ...message, content: [block] });
-  }
-
-  return blockIndex === 0 ? estimateMessageTokens(message) : 0;
-}
-
-function blockLabel(blockType: BlockKind, toolName?: string): string {
-  if (blockType === "tool-call" && toolName) return `tool-call · ${toolName}`;
-  if (blockType === "tool-result" && toolName) return `tool-result · ${toolName}`;
-  return blockType;
-}
-
-function toBlockNode(
-  message: ContextSessionMessage,
-  messageIndex: number,
-  blockIndex: number,
-  blockType: BlockKind,
-  toolName?: string,
-): ContextBlockNode {
-  return {
-    kind: "block",
-    id: `block:${messageIndex}:${blockIndex}`,
-    blockType,
-    label: blockLabel(blockType, toolName),
-    tokens: estimateBlockTokens(message, blockIndex),
-  };
-}
-
-function classifyAssistantBlocks(message: ContextSessionMessage, messageIndex: number): ContextBlockNode[] {
-  const content = (message.content ?? []) as ContentBlock[];
-  return content.map((block, blockIndex) => {
-    switch (block.type) {
-      case "thinking":
-        return toBlockNode(message, messageIndex, blockIndex, "thinking");
-      case "text":
-        return toBlockNode(message, messageIndex, blockIndex, "text");
-      case "toolCall":
-        return toBlockNode(message, messageIndex, blockIndex, "tool-call", block.name);
-      default:
-        return toBlockNode(message, messageIndex, blockIndex, "custom");
-    }
-  });
-}
-
-function classifyUserLikeBlocks(message: ContextSessionMessage, messageIndex: number): ContextBlockNode[] {
-  const content = message.content;
-  if (typeof content === "string") {
-    return [toBlockNode(message, messageIndex, 0, "text")];
-  }
-
-  return ((content ?? []) as ContentBlock[]).map((block, blockIndex) => {
-    if (block.type === "image") {
-      return toBlockNode(message, messageIndex, blockIndex, "image");
-    }
-    return toBlockNode(message, messageIndex, blockIndex, "text");
-  });
-}
-
-export function classifyBlocks(message: ContextSessionMessage, messageIndex: number): ContextBlockNode[] {
-  const role = message.role;
-
-  if (role === "assistant") {
-    return classifyAssistantBlocks(message, messageIndex);
-  }
-
-  if (role === "toolResult") {
-    const content = (message.content ?? []) as ContentBlock[];
-    if (content.length === 0) {
-      return [toBlockNode(message, messageIndex, 0, "tool-result", message.toolName)];
-    }
-    return content.map((block, blockIndex) =>
-      block.type === "image"
-        ? toBlockNode(message, messageIndex, blockIndex, "image")
-        : toBlockNode(message, messageIndex, blockIndex, "tool-result", message.toolName),
-    );
-  }
-
-  if (role === "user" || role === "developer") {
-    return classifyUserLikeBlocks(message, messageIndex);
-  }
-
-  return [toBlockNode(message, messageIndex, 0, "custom")];
-}
+[72 lines elided; re-read needed ranges, e.g. /Users/nano/Projects/omp-context-ui/src/context-tree/classify-blocks.ts:20-25,27-32]

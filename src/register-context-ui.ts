@@ -24,7 +24,7 @@ export function registerContextUiCommand(
   pi.registerCommand("context-ui", {
     description: "Open interactive context window inspector",
     handler: async (_args, ctx: ExtensionCommandContext) => {
-      const { openContextInspectorOverlay } = await import("./overlay/context-inspector.js");
+      const { openContextInspectorOverlay } = await import("./overlay/context-inspector");
       await openContextInspectorOverlay(ctx);
     },
   });

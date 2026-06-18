@@ -1,138 +1,48 @@
-import type { ContextCategoryNode, ContextMessageNode, ContextTree } from "./types.js";
+[src/context-tree/tree-navigator.ts#D4ED]
+1:import type { ContextCategoryNode, ContextMessageNode, ContextTree } from "./types";
+2:
+3:export interface VisibleTreeRow {
+4:  id: string;
+5:  depth: number;
+6:  label: string;
+7:  tokens: number;
+8:  hasChildren: boolean;
+9:  expanded: boolean;
+10:  parentId: string | null;
+11:}
+12:
+13:export interface TreeNavigatorOptions {
+14:  /** Category ids expanded on open. Defaults to every category except Messages. */
+15:  expandCategoryIds?: string[];
+16:}
+17:
+18:export class TreeNavigator {
+19:  readonly #tree: ContextTree;
+20:  readonly #expanded = new Set<string>();
+21:  #selectedId: string | null;
+22:
+23-30:  constructor(tree: ContextTree, options: TreeNavigatorOptions = {}) { .. }
+31:
+32:  get selectedId(): string | null {
+33:    return this.#selectedId;
+34:  }
+35:
+36-71:  getVisibleRows(): VisibleTreeRow[] { .. }
+72:
+73:  #appendMessageRows(
+74:    messages: readonly ContextMessageNode[],
+75:    parentId: string,
+76:    depth: number,
+77:    rows: VisibleTreeRow[],
+78-104:  ): void { .. }
+105:
+106-117:  moveSelection(delta: number): void { .. }
+118:
+119-123:  expandSelected(): void { .. }
+124:
+125-128:  collapseSelected(): void { .. }
+129:
+130-137:  back(): "parent" | "close" { .. }
+138:}
 
-export interface VisibleTreeRow {
-  id: string;
-  depth: number;
-  label: string;
-  tokens: number;
-  hasChildren: boolean;
-  expanded: boolean;
-  parentId: string | null;
-}
-
-export interface TreeNavigatorOptions {
-  /** Category ids expanded on open. Defaults to every category except Messages. */
-  expandCategoryIds?: string[];
-}
-
-export class TreeNavigator {
-  readonly #tree: ContextTree;
-  readonly #expanded = new Set<string>();
-  #selectedId: string | null;
-
-  constructor(tree: ContextTree, options: TreeNavigatorOptions = {}) {
-    this.#tree = tree;
-    const defaultExpanded =
-      options.expandCategoryIds ??
-      tree.categories.filter((category) => category.id !== "messages").map((category) => category.id);
-    for (const id of defaultExpanded) this.#expanded.add(id);
-    this.#selectedId = tree.categories[0]?.id ?? null;
-  }
-
-  get selectedId(): string | null {
-    return this.#selectedId;
-  }
-
-  getVisibleRows(): VisibleTreeRow[] {
-    const rows: VisibleTreeRow[] = [];
-
-    for (const category of this.#tree.categories) {
-      const hasChildren = category.children.length > 0;
-      const expanded = hasChildren && this.#expanded.has(category.id);
-      rows.push({
-        id: category.id,
-        depth: 0,
-        label: category.label,
-        tokens: category.tokens,
-        hasChildren,
-        expanded,
-        parentId: null,
-      });
-      if (!expanded) continue;
-
-      if (category.id === "messages") {
-        this.#appendMessageRows(category.children as ContextMessageNode[], category.id, 1, rows);
-      } else {
-        for (const leaf of category.children) {
-          rows.push({
-            id: leaf.id,
-            depth: 1,
-            label: leaf.label,
-            tokens: leaf.tokens,
-            hasChildren: false,
-            expanded: false,
-            parentId: category.id,
-          });
-        }
-      }
-    }
-
-    return rows;
-  }
-
-  #appendMessageRows(
-    messages: readonly ContextMessageNode[],
-    parentId: string,
-    depth: number,
-    rows: VisibleTreeRow[],
-  ): void {
-    for (const message of messages) {
-      const hasChildren = message.blocks.length > 0;
-      const expanded = hasChildren && this.#expanded.has(message.id);
-      rows.push({
-        id: message.id,
-        depth,
-        label: message.label,
-        tokens: message.tokens,
-        hasChildren,
-        expanded,
-        parentId,
-      });
-      if (!expanded) continue;
-      for (const block of message.blocks) {
-        rows.push({
-          id: block.id,
-          depth: depth + 1,
-          label: block.label,
-          tokens: block.tokens,
-          hasChildren: false,
-          expanded: false,
-          parentId: message.id,
-        });
-      }
-    }
-  }
-
-  moveSelection(delta: number): void {
-    const rows = this.getVisibleRows();
-    if (rows.length === 0) {
-      this.#selectedId = null;
-      return;
-    }
-
-    const currentIndex = rows.findIndex((row) => row.id === this.#selectedId);
-    const startIndex = currentIndex === -1 ? 0 : currentIndex;
-    const nextIndex = Math.max(0, Math.min(rows.length - 1, startIndex + delta));
-    this.#selectedId = rows[nextIndex]?.id ?? null;
-  }
-
-  expandSelected(): void {
-    if (!this.#selectedId) return;
-    const row = this.getVisibleRows().find((candidate) => candidate.id === this.#selectedId);
-    if (row?.hasChildren) this.#expanded.add(this.#selectedId);
-  }
-
-  collapseSelected(): void {
-    if (!this.#selectedId) return;
-    this.#expanded.delete(this.#selectedId);
-  }
-
-  back(): "parent" | "close" {
-    if (!this.#selectedId) return "close";
-    const row = this.getVisibleRows().find((candidate) => candidate.id === this.#selectedId);
-    if (!row) return "close";
-    if (row.parentId === null) return "close";
-    this.#selectedId = row.parentId;
-    return "parent";
-  }
-}
+[86 lines elided; re-read needed ranges, e.g. /Users/nano/Projects/omp-context-ui/src/context-tree/tree-navigator.ts:23-30,36-71]
