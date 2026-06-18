@@ -1,4 +1,4 @@
-import * as compaction from "@oh-my-pi/pi-agent-core/compaction";
+import * as compaction from "@oh-my-pi/pi-agent-core";
 
 type EstimateTokensFn = (message: unknown) => number;
 

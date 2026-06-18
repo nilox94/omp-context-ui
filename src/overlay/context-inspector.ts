@@ -1,14 +1,16 @@
-import type { ExtensionCommandContext } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import type { Theme } from "@oh-my-pi/pi-coding-agent/modes/theme/theme";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { Component } from "@oh-my-pi/pi-tui/tui";
-import { buildContextTree } from "../context-tree/build-context-tree";
-import { formatVisibleTreeRow } from "../context-tree/format-tree-row";
-import { TreeNavigator } from "../context-tree/tree-navigator";
-import type { ContextTree } from "../context-tree/types";
-import { resolveMainSession } from "../resolve-main-session";
-import { formatContextFooter } from "./category-rollup";
-import { renderContextInspectorLayout } from "./layout";
+import type {
+	AgentSession,
+	ExtensionCommandContext,
+	Theme,
+} from "@oh-my-pi/pi-coding-agent";
+import type { Component } from "@oh-my-pi/pi-tui";
+import { buildContextTree } from "@/context-tree/build-context-tree";
+import { formatVisibleTreeRow } from "@/context-tree/format-tree-row";
+import { TreeNavigator } from "@/context-tree/tree-navigator";
+import type { ContextTree } from "@/context-tree/types";
+import { formatContextFooter } from "@/overlay/category-rollup";
+import { renderContextInspectorLayout } from "@/overlay/layout";
+import { resolveMainSession } from "@/resolve-main-session";
 
 function matchesArrow(data: string, direction: "left" | "right"): boolean {
 	return (

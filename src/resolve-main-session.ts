@@ -1,6 +1,8 @@
-import type { ExtensionCommandContext } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
+import type {
+	AgentSession,
+	ExtensionCommandContext,
+} from "@oh-my-pi/pi-coding-agent";
 import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
 
 export class MainSessionUnavailableError extends Error {
 	constructor(message: string) {

@@ -1,20 +1,22 @@
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
+import type { AgentSession, Skill } from "@oh-my-pi/pi-coding-agent";
 import {
 	computeContextBreakdown,
 	estimateSkillsTokens,
 	estimateToolSchemaTokens,
 } from "@oh-my-pi/pi-coding-agent/modes/utils/context-usage";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
 import { countTokens } from "@oh-my-pi/pi-natives";
-import { type ContextSessionMessage, classifyBlocks } from "./classify-blocks";
-import { estimateMessageTokens } from "./estimate-message-tokens";
+import {
+	type ContextSessionMessage,
+	classifyBlocks,
+} from "@/context-tree/classify-blocks";
+import { estimateMessageTokens } from "@/context-tree/estimate-message-tokens";
 import type {
 	CategoryId,
 	ContextCategoryNode,
 	ContextLeafNode,
 	ContextMessageNode,
 	ContextTree,
-} from "./types";
+} from "@/context-tree/types";
 
 const EMPTY_TOOLS: ReadonlyArray<{
 	name: string;

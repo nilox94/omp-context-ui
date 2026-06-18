@@ -1,6 +1,6 @@
 import { describe, expect, it, mock } from "bun:test";
 
-mock.module("@oh-my-pi/pi-agent-core/compaction", () => ({
+mock.module("@oh-my-pi/pi-agent-core", () => ({
 	estimateTokens: () => 12,
 }));
 
@@ -59,7 +59,7 @@ mock.module("@oh-my-pi/pi-coding-agent/modes/utils/context-usage", () => ({
 	estimateToolSchemaTokens: () => 8,
 }));
 
-import { buildContextTree } from "../src/context-tree/build-context-tree.js";
+import { buildContextTree } from "@/context-tree/build-context-tree";
 
 function makeSession(overrides: {
 	systemPrompt?: string[];

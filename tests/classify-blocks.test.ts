@@ -1,10 +1,10 @@
 import { describe, expect, it, mock } from "bun:test";
 
-mock.module("@oh-my-pi/pi-agent-core/compaction", () => ({
+mock.module("@oh-my-pi/pi-agent-core", () => ({
 	estimateTokens: () => 12,
 }));
 
-import { classifyBlocks } from "../src/context-tree/classify-blocks.js";
+import { classifyBlocks } from "@/context-tree/classify-blocks";
 
 describe("classifyBlocks", () => {
 	it("splits assistant content into typed blocks in transcript order", () => {

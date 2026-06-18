@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { TreeNavigator } from "../src/context-tree/tree-navigator.js";
-import type { ContextTree } from "../src/context-tree/types.js";
+import { TreeNavigator } from "@/context-tree/tree-navigator";
+import type { ContextTree } from "@/context-tree/types";
 
 const sampleTree: ContextTree = {
 	usedTokens: 100,

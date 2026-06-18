@@ -1,7 +1,7 @@
 import type {
 	ExtensionAPI,
 	ExtensionCommandContext,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
+} from "@oh-my-pi/pi-coding-agent";
 
 export interface RegisterContextUiOptions {
 	hasUI: boolean;
@@ -25,7 +25,7 @@ export function registerContextUiCommand(
 		description: "Open interactive context window inspector",
 		handler: async (_args, ctx: ExtensionCommandContext) => {
 			const { openContextInspectorOverlay } = await import(
-				"./overlay/context-inspector.js"
+				"@/overlay/context-inspector"
 			);
 			await openContextInspectorOverlay(ctx);
 		},

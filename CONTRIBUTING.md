@@ -39,7 +39,28 @@ bun run fix           # auto-fix lint/format issues
 ## Code style
 
 Match the surrounding code; follow the `context-tree/` vs `overlay/` boundaries and file-per-concern naming.
-Relative imports are **extensionless**, matching OMP packages (`@oh-my-pi/*`).
+
+Use **`@/`** for cross-module imports within this plugin (configured in `package.json` `imports` and `tsconfig.json` `paths`):
+
+```ts
+import { buildContextTree } from "@/context-tree/build-context-tree";
+import { formatContextFooter } from "@/overlay/category-rollup";
+```
+
+Prefer **package-root imports** from `@oh-my-pi/*` when types are re-exported there; use subpaths only when needed (e.g. `registry/agent-registry`, `modes/utils/context-usage`):
+
+```ts
+import type { AgentSession, ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import type { Component } from "@oh-my-pi/pi-tui";
+```
+
+Formatting is **Biome** (`biome.json`): tabs, double quotes, semicolons always.
+Run `bun run fmt` or `bun run fix` before committing.
+
+**Zed:** `.zed/settings.json` routes format-on-save through `bun x biome format`, matching `bun fmt`.
+If formatting still looks wrong, check user-level Zed settings for a TypeScript formatter override.
+
+**VS Code / Cursor:** install the Biome extension; `.vscode/settings.json` sets it as the default formatter.
 
 ## Testing
 
