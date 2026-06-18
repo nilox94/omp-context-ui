@@ -38,18 +38,12 @@ bun run check:types   # typecheck (the only static gate; no separate linter)
 ## Code style
 
 Match the surrounding code; follow the `context-tree/` vs `overlay/` boundaries and file-per-concern naming.
-
-Relative imports are **extensionless**, matching OMP packages (`@oh-my-pi/*`). Bun loads `.ts` source directly; there is no emit step:
-
-```ts
-import { registerContextUiCommand } from "./register-context-ui";
-```
-
-Bare specifiers (e.g. `@oh-my-pi/pi-coding-agent`) resolve through each package's `exports` map.
+Relative imports are **extensionless**, matching OMP packages (`@oh-my-pi/*`).
 
 ## Testing
 
-Pure logic is covered by unit tests — add or update them for any behavior assertable without a live session. Overlay rendering, slash commands, and session mutation depend on runtime surfaces unit tests don't cover, so verify them manually:
+Pure logic is covered by unit tests — add or update them for any behavior assertable without a live session.
+Overlay rendering, slash commands, and session mutation depend on runtime surfaces unit tests don't cover, so verify them manually:
 
 1. Link the plugin and start `omp` in a project with an active session and some tool output
 2. Run `/context-ui` — confirm the category rollup, preview pane, and footer render
@@ -57,7 +51,9 @@ Pure logic is covered by unit tests — add or update them for any behavior asse
 
 ## Scope
 
-This plugin only does recoverable **Shake** (eliding content with a recovery artifact). Summarizing/rewriting history (Compact) and auto-dropping output (Prune) are out of scope. See [`CONTEXT.md`](./CONTEXT.md) for these terms.
+This plugin only does recoverable **Shake** (eliding content with a recovery artifact).
+Summarizing/rewriting history (Compact) and auto-dropping output (Prune) are out of scope.
+See [`CONTEXT.md`](./CONTEXT.md) for these terms.
 
 Before non-trivial work, open an issue to align on approach.
 
