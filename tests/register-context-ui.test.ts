@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, mock } from "bun:test";
 import {
 	__resetContextUiRegistrationForTests,
 	registerContextUiCommand,
-} from "@/register-context-ui";
+} from "../src/register-context-ui";
 
 describe("registerContextUiCommand", () => {
 	beforeEach(() => {

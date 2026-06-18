@@ -40,14 +40,21 @@ bun run fix           # auto-fix lint/format issues
 
 Match the surrounding code; follow the `context-tree/` vs `overlay/` boundaries and file-per-concern naming.
 
-Use **relative `./` imports** within the same folder; use **`@/`** for cross-module imports (configured in `package.json` `imports` and `tsconfig.json` `paths`):
+Imports should stay short and obvious:
+
+- **Same directory** → relative `./` (never `@/`)
+- **Different directory under `src/`** → `@/` (configured in `package.json` `imports` and `tsconfig.json` `paths`)
+- **Tests importing `src/`** → relative `../src/...`
 
 ```ts
-// same folder (context-tree/)
+// same directory (context-tree/)
 import { classifyBlocks } from "./classify-blocks";
 
-// cross-module (overlay → context-tree)
+// different directory (overlay → context-tree)
 import { buildContextTree } from "@/context-tree/build-context-tree";
+
+// tests → src
+import { classifyBlocks } from "../src/context-tree/classify-blocks";
 ```
 
 Prefer **package-root imports** from `@oh-my-pi/*` when types are re-exported there; use subpaths only when needed (e.g. `registry/agent-registry`, `modes/utils/context-usage`):
