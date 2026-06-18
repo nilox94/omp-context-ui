@@ -1,4 +1,4 @@
-import type { ContextMessageNode, ContextTree } from "@/context-tree/types";
+import type { ContextMessageNode, ContextTree } from "./types";
 
 export interface VisibleTreeRow {
 	id: string;

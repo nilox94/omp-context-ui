@@ -40,11 +40,14 @@ bun run fix           # auto-fix lint/format issues
 
 Match the surrounding code; follow the `context-tree/` vs `overlay/` boundaries and file-per-concern naming.
 
-Use **`@/`** for cross-module imports within this plugin (configured in `package.json` `imports` and `tsconfig.json` `paths`):
+Use **relative `./` imports** within the same folder; use **`@/`** for cross-module imports (configured in `package.json` `imports` and `tsconfig.json` `paths`):
 
 ```ts
+// same folder (context-tree/)
+import { classifyBlocks } from "./classify-blocks";
+
+// cross-module (overlay → context-tree)
 import { buildContextTree } from "@/context-tree/build-context-tree";
-import { formatContextFooter } from "@/overlay/category-rollup";
 ```
 
 Prefer **package-root imports** from `@oh-my-pi/*` when types are re-exported there; use subpaths only when needed (e.g. `registry/agent-registry`, `modes/utils/context-usage`):

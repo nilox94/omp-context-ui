@@ -5,18 +5,15 @@ import {
 	estimateToolSchemaTokens,
 } from "@oh-my-pi/pi-coding-agent/modes/utils/context-usage";
 import { countTokens } from "@oh-my-pi/pi-natives";
-import {
-	type ContextSessionMessage,
-	classifyBlocks,
-} from "@/context-tree/classify-blocks";
-import { estimateMessageTokens } from "@/context-tree/estimate-message-tokens";
+import { type ContextSessionMessage, classifyBlocks } from "./classify-blocks";
+import { estimateMessageTokens } from "./estimate-message-tokens";
 import type {
 	CategoryId,
 	ContextCategoryNode,
 	ContextLeafNode,
 	ContextMessageNode,
 	ContextTree,
-} from "@/context-tree/types";
+} from "./types";
 
 const EMPTY_TOOLS: ReadonlyArray<{
 	name: string;
