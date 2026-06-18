@@ -30,9 +30,10 @@ There is no hot-reload: restart your OMP session after editing plugin code, and 
 ## Commands
 
 ```bash
+bun run check         # lint + format + typecheck (CI gate)
 bun test              # run unit tests
 bun run test:watch    # tests in watch mode
-bun run check:types   # typecheck (the only static gate; no separate linter)
+bun run fix           # auto-fix lint/format issues
 ```
 
 ## Code style
@@ -61,7 +62,7 @@ Before non-trivial work, open an issue to align on approach.
 
 1. Branch from `main`; keep changes focused and within existing module boundaries
 2. Add or update unit tests for pure-logic changes
-3. Run `bun test` and `bun run check:types`
+3. Run `bun run check` and `bun test`
 4. Note any manual testing performed against a live OMP session
 
 For domain terms see [`CONTEXT.md`](./CONTEXT.md); for architecture decisions see [`docs/adr/`](./docs/adr/).
