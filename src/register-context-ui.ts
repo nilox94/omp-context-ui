@@ -2,10 +2,7 @@ import type {
 	ExtensionAPI,
 	ExtensionCommandContext,
 } from "@oh-my-pi/pi-coding-agent";
-
-export interface RegisterContextUiOptions {
-	hasUI: boolean;
-}
+import { openContextInspectorOverlay } from "./overlay/context-inspector";
 
 let registered = false;
 
@@ -16,18 +13,22 @@ export function __resetContextUiRegistrationForTests(): void {
 
 export function registerContextUiCommand(
 	pi: Pick<ExtensionAPI, "registerCommand">,
-	options: RegisterContextUiOptions,
 ): void {
-	if (!options.hasUI || registered) return;
+	if (registered) return;
 	registered = true;
 
 	pi.registerCommand("context-ui", {
 		description: "Open interactive context window inspector",
 		handler: async (_args, ctx: ExtensionCommandContext) => {
-			const { openContextInspectorOverlay } = await import(
-				"@/overlay/context-inspector"
-			);
-			await openContextInspectorOverlay(ctx);
+			if (!ctx.hasUI) {
+				return;
+			}
+			try {
+				await openContextInspectorOverlay(ctx);
+			} catch (error) {
+				const message = error instanceof Error ? error.message : String(error);
+				ctx.ui.notify(message, "error");
+			}
 		},
 	});
 }

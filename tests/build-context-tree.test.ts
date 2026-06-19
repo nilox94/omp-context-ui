@@ -59,6 +59,7 @@ mock.module("@oh-my-pi/pi-coding-agent/modes/utils/context-usage", () => ({
 	estimateToolSchemaTokens: () => 8,
 }));
 
+import type { ContextSessionSource } from "@/context-session-source";
 import { buildContextTree } from "@/context-tree/build-context-tree";
 
 function makeSession(overrides: {
@@ -73,7 +74,7 @@ function makeSession(overrides: {
 	tools?: Array<{
 		name: string;
 		description: string;
-		parameters: Record<string, unknown>;
+		parameters: unknown;
 	}>;
 	messages?: Array<Record<string, unknown>>;
 	contextWindow?: number;
@@ -91,24 +92,16 @@ function makeSession(overrides: {
 				source: "c",
 			},
 		],
-		agent: {
-			state: {
-				tools: overrides.tools ?? [
-					{
-						name: "grep",
-						description: "search files",
-						parameters: { type: "object", properties: {} },
-					},
-				],
+		tools: overrides.tools ?? [
+			{
+				name: "grep",
+				description: "search files",
+				parameters: { type: "object", properties: {} },
 			},
-		},
+		],
 		messages: overrides.messages ?? [],
 		model: { contextWindow: overrides.contextWindow ?? 200_000 },
-		settings: {
-			getGroup: () => ({ enabled: false, strategy: "off" }),
-			get: () => "none",
-		},
-	} as never;
+	} as unknown as ContextSessionSource;
 }
 
 describe("buildContextTree", () => {

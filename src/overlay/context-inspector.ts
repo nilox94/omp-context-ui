@@ -1,14 +1,10 @@
-import type {
-	AgentSession,
-	ExtensionCommandContext,
-	Theme,
-} from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionCommandContext, Theme } from "@oh-my-pi/pi-coding-agent";
 import type { Component } from "@oh-my-pi/pi-tui";
-import { buildContextTree } from "@/context-tree/build-context-tree";
-import { formatVisibleTreeRow } from "@/context-tree/format-tree-row";
-import { TreeNavigator } from "@/context-tree/tree-navigator";
-import type { ContextTree } from "@/context-tree/types";
-import { resolveMainSession } from "@/resolve-main-session";
+import { createContextSessionSource } from "../context-session-source";
+import { buildContextTree } from "../context-tree/build-context-tree";
+import { formatVisibleTreeRow } from "../context-tree/format-tree-row";
+import { TreeNavigator } from "../context-tree/tree-navigator";
+import type { ContextTree } from "../context-tree/types";
 import { formatContextFooter } from "./category-rollup";
 import { renderContextInspectorLayout } from "./layout";
 
@@ -30,13 +26,15 @@ export interface ContextInspectorSnapshot {
 }
 
 export function buildContextInspectorSnapshot(
-	session: AgentSession,
+	ctx: ExtensionCommandContext,
 ): ContextInspectorSnapshot {
-	const tree = buildContextTree(session);
+	const tree = buildContextTree(createContextSessionSource(ctx));
+	const usage = ctx.getContextUsage();
+
 	return {
 		tree,
-		usedTokens: tree.usedTokens,
-		contextWindow: tree.contextWindow,
+		usedTokens: usage?.tokens ?? tree.usedTokens,
+		contextWindow: usage?.contextWindow ?? tree.contextWindow,
 	};
 }
 
@@ -114,15 +112,7 @@ export function createContextInspectorOverlay(
 export async function openContextInspectorOverlay(
 	ctx: ExtensionCommandContext,
 ): Promise<void> {
-	let snapshot: ContextInspectorSnapshot;
-	try {
-		const session = resolveMainSession(ctx);
-		snapshot = buildContextInspectorSnapshot(session);
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error);
-		ctx.ui.notify(message, "error");
-		return;
-	}
+	const snapshot = buildContextInspectorSnapshot(ctx);
 
 	await ctx.ui.custom<undefined>(
 		(_tui, theme, keybindings, done) =>

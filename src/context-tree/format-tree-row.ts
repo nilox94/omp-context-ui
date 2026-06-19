@@ -1,7 +1,7 @@
 import {
 	formatApproxTokens,
 	formatCategoryRow,
-} from "@/overlay/category-rollup";
+} from "../overlay/category-rollup";
 import type { VisibleTreeRow } from "./tree-navigator";
 
 const INDENT = "  ";

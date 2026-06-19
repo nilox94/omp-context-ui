@@ -1,10 +1,11 @@
-import type { AgentSession, Skill } from "@oh-my-pi/pi-coding-agent";
+import type { Skill } from "@oh-my-pi/pi-coding-agent";
 import {
 	computeContextBreakdown,
 	estimateSkillsTokens,
 	estimateToolSchemaTokens,
 } from "@oh-my-pi/pi-coding-agent/modes/utils/context-usage";
 import { countTokens } from "@oh-my-pi/pi-natives";
+import type { ContextSessionSource } from "../context-session-source";
 import { type ContextSessionMessage, classifyBlocks } from "./classify-blocks";
 import { estimateMessageTokens } from "./estimate-message-tokens";
 import type {
@@ -14,6 +15,27 @@ import type {
 	ContextMessageNode,
 	ContextTree,
 } from "./types";
+
+const DISABLED_COMPACTION_SETTINGS = {
+	enabled: false,
+	strategy: "off" as const,
+};
+
+const STUB_SESSION_SETTINGS = {
+	getGroup: () => DISABLED_COMPACTION_SETTINGS,
+	get: () => undefined,
+};
+
+function asBreakdownSession(source: ContextSessionSource) {
+	return {
+		model: source.model,
+		systemPrompt: source.systemPrompt,
+		skills: source.skills,
+		messages: source.messages,
+		agent: { state: { tools: source.tools ?? EMPTY_TOOLS } },
+		settings: STUB_SESSION_SETTINGS,
+	} as never;
+}
 
 const EMPTY_TOOLS: ReadonlyArray<{
 	name: string;
@@ -178,10 +200,10 @@ function buildSkillLeaves(skills: readonly Skill[]): ContextLeafNode[] {
 	}));
 }
 
-export function buildContextTree(session: AgentSession): ContextTree {
-	const breakdown = computeContextBreakdown(session);
+export function buildContextTree(session: ContextSessionSource): ContextTree {
+	const breakdown = computeContextBreakdown(asBreakdownSession(session));
 	const systemPromptParts = session.systemPrompt ?? [];
-	const tools = session.agent?.state?.tools ?? EMPTY_TOOLS;
+	const tools = session.tools ?? EMPTY_TOOLS;
 	const skills = session.skills ?? [];
 	const messages = session.messages ?? [];
 
