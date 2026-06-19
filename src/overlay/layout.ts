@@ -1,3 +1,10 @@
+import {
+	Ellipsis,
+	padding,
+	truncateToWidth,
+	visibleWidth,
+} from "@oh-my-pi/pi-tui";
+
 export interface ContextInspectorLayoutLabels {
 	title: string;
 	treeLabel: string;
@@ -11,15 +18,33 @@ const TREE_MIN_WIDTH = 24;
 const PREVIEW_MIN_WIDTH = 24;
 const SEPARATOR = " │ ";
 
-function truncate(text: string, width: number): string {
-	if (width <= 0) return "";
-	if (text.length <= width) return text;
-	if (width <= 1) return text.slice(0, width);
-	return `${text.slice(0, width - 1)}…`;
+export interface ContextInspectorColumnWidths {
+	treeWidth: number;
+	previewWidth: number;
+	safeWidth: number;
+}
+
+export function getContextInspectorColumnWidths(
+	width: number,
+): ContextInspectorColumnWidths {
+	const safeWidth = Math.max(1, width);
+	const separatorWidth = SEPARATOR.length;
+	const available = Math.max(TREE_MIN_WIDTH + PREVIEW_MIN_WIDTH, safeWidth);
+	const treeWidth = Math.max(TREE_MIN_WIDTH, Math.floor(available * 0.4));
+	const previewWidth = Math.max(
+		PREVIEW_MIN_WIDTH,
+		available - treeWidth - separatorWidth,
+	);
+	return { treeWidth, previewWidth, safeWidth };
 }
 
 function padColumn(text: string, width: number): string {
-	return truncate(text, width).padEnd(width, " ");
+	if (width <= 0) return "";
+	const visible = visibleWidth(text);
+	if (visible >= width) {
+		return truncateToWidth(text, width, Ellipsis.Unicode);
+	}
+	return text + padding(width - visible);
 }
 
 function pairColumns(
@@ -29,28 +54,21 @@ function pairColumns(
 	previewWidth: number,
 	safeWidth: number,
 ): string {
-	return truncate(
+	const row =
 		padColumn(treeLine, treeWidth) +
-			SEPARATOR +
-			padColumn(previewLine, previewWidth),
-		safeWidth,
-	);
+		SEPARATOR +
+		padColumn(previewLine, previewWidth);
+	return truncateToWidth(row, safeWidth, Ellipsis.Omit);
 }
 
 export function renderContextInspectorLayout(
 	width: number,
 	labels: ContextInspectorLayoutLabels,
 ): string[] {
-	const safeWidth = Math.max(1, width);
-	const separatorWidth = SEPARATOR.length;
-	const available = Math.max(TREE_MIN_WIDTH + PREVIEW_MIN_WIDTH, safeWidth);
-	const treeWidth = Math.max(TREE_MIN_WIDTH, Math.floor(available * 0.4));
-	const previewWidth = Math.max(
-		PREVIEW_MIN_WIDTH,
-		available - treeWidth - separatorWidth,
-	);
+	const { treeWidth, previewWidth, safeWidth } =
+		getContextInspectorColumnWidths(width);
 
-	const headerLine = truncate(labels.title, safeWidth);
+	const headerLine = truncateToWidth(labels.title, safeWidth, Ellipsis.Omit);
 	const bodyLine = pairColumns(
 		labels.treeLabel,
 		labels.previewLabel,
@@ -72,7 +90,7 @@ export function renderContextInspectorLayout(
 			safeWidth,
 		),
 	);
-	const footerLine = truncate(labels.footer, safeWidth);
+	const footerLine = truncateToWidth(labels.footer, safeWidth, Ellipsis.Omit);
 	const rule = "─".repeat(safeWidth);
 
 	return [headerLine, rule, bodyLine, ...contentLines, rule, footerLine];

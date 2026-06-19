@@ -1,12 +1,15 @@
 import type { ExtensionCommandContext, Theme } from "@oh-my-pi/pi-coding-agent";
-import type { Component } from "@oh-my-pi/pi-tui";
+import { applyBackgroundToLine, type Component } from "@oh-my-pi/pi-tui";
 import { createContextSessionSource } from "../context-session-source";
 import { buildContextTree } from "../context-tree/build-context-tree";
 import { formatVisibleTreeRow } from "../context-tree/format-tree-row";
 import { TreeNavigator } from "../context-tree/tree-navigator";
 import type { ContextTree } from "../context-tree/types";
 import { formatContextFooter } from "./category-rollup";
-import { renderContextInspectorLayout } from "./layout";
+import {
+	getContextInspectorColumnWidths,
+	renderContextInspectorLayout,
+} from "./layout";
 
 function matchesArrow(data: string, direction: "left" | "right"): boolean {
 	return (
@@ -85,13 +88,19 @@ export function createContextInspectorOverlay(
 		},
 
 		render(width: number): readonly string[] {
+			const { treeWidth } = getContextInspectorColumnWidths(width);
 			const rows = navigator.getVisibleRows();
-			const treeLines = rows.map((row) =>
-				theme.fg(
-					"text",
-					formatVisibleTreeRow(row, row.id === navigator.selectedId),
-				),
-			);
+			const treeLines = rows.map((row) => {
+				const selected = row.id === navigator.selectedId;
+				const line = formatVisibleTreeRow(row, selected);
+				if (selected) {
+					const styled = theme.bold(theme.fg("accent", line));
+					return applyBackgroundToLine(styled, treeWidth, (text) =>
+						theme.bg("selectedBg", text),
+					);
+				}
+				return theme.fg("text", line);
+			});
 			const previewLines = buildPreviewLines(Math.max(treeLines.length, 1));
 
 			return renderContextInspectorLayout(width, {

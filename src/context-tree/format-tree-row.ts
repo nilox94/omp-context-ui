@@ -5,15 +5,18 @@ import {
 import type { VisibleTreeRow } from "./tree-navigator";
 
 const INDENT = "  ";
+/** Reserved left column so the selection cursor never shifts row content. */
+const CURSOR_SELECTED = "› ";
+const CURSOR_BLANK = "  ";
 
 export function formatVisibleTreeRow(
 	row: VisibleTreeRow,
 	selected: boolean,
 ): string {
+	const cursor = selected ? CURSOR_SELECTED : CURSOR_BLANK;
 	const prefix = row.hasChildren ? (row.expanded ? "▾ " : "▸ ") : "  ";
 	const indent = INDENT.repeat(row.depth);
-	const marker = selected ? "› " : "";
-	const label = `${indent}${marker}${prefix}${row.label}`;
+	const label = `${cursor}${indent}${prefix}${row.label}`;
 	return `${label}  ${formatApproxTokens(row.tokens)}`;
 }
 
