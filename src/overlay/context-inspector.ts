@@ -2,6 +2,7 @@ import type { ExtensionCommandContext, Theme } from "@oh-my-pi/pi-coding-agent";
 import { applyBackgroundToLine, type Component } from "@oh-my-pi/pi-tui";
 import { createContextSessionSource } from "../context-session-source";
 import { buildContextTree } from "../context-tree/build-context-tree";
+import { buildPreviewIndex } from "../context-tree/build-preview-index";
 import { formatVisibleTreeRow } from "../context-tree/format-tree-row";
 import {
 	type Tier,
@@ -15,6 +16,7 @@ import {
 	getContextInspectorColumnWidths,
 	renderContextInspectorLayout,
 } from "./layout";
+import { buildPreviewContentLines } from "./preview-pane";
 
 function matchesArrow(data: string, direction: "left" | "right"): boolean {
 	return (
@@ -29,6 +31,7 @@ interface OverlayKeybindings {
 
 export interface ContextInspectorSnapshot {
 	tree: ContextTree;
+	previewIndex: ReadonlyMap<string, string>;
 	usedTokens: number;
 	contextWindow: number;
 }
@@ -36,11 +39,14 @@ export interface ContextInspectorSnapshot {
 export function buildContextInspectorSnapshot(
 	ctx: ExtensionCommandContext,
 ): ContextInspectorSnapshot {
-	const tree = buildContextTree(createContextSessionSource(ctx));
+	const source = createContextSessionSource(ctx);
+	const tree = buildContextTree(source);
+	const previewIndex = buildPreviewIndex(source, tree);
 	const usage = ctx.getContextUsage();
 
 	return {
 		tree,
+		previewIndex,
 		usedTokens: usage?.tokens ?? tree.usedTokens,
 		contextWindow: usage?.contextWindow ?? tree.contextWindow,
 	};
@@ -75,14 +81,21 @@ export function createContextInspectorOverlay(
 		const selected = navigator
 			.getVisibleRows()
 			.find((row) => row.id === navigator.selectedId);
-		return Array.from({ length: treeLineCount }, (_, index) => {
-			if (index !== 0) return "";
-			if (!selected) return theme.fg("dim", "(select a row)");
+		const selection = selected
+			? {
+					label: selected.label,
+					tokens: selected.tokens,
+					content: snapshot.previewIndex.get(selected.id) ?? "",
+				}
+			: null;
+		const plainLines = buildPreviewContentLines(selection, treeLineCount);
+
+		return plainLines.map((line, index) => {
+			if (!line) return "";
+			if (!selected) return theme.fg("dim", line);
 			const tier = tierForRow(selected.categoryId, selected.tokens);
-			return theme.fg(
-				tierThemeColor(tier),
-				`${selected.label} · ${selected.tokens} tokens`,
-			);
+			if (index === 0) return theme.fg(tierThemeColor(tier), line);
+			return theme.fg("text", line);
 		});
 	};
 
