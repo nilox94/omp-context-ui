@@ -1,7 +1,8 @@
-import type { ContextMessageNode, ContextTree } from "./types";
+import type { CategoryId, ContextMessageNode, ContextTree } from "./types";
 
 export interface VisibleTreeRow {
 	id: string;
+	categoryId: CategoryId;
 	depth: number;
 	label: string;
 	tokens: number;
@@ -43,6 +44,7 @@ export class TreeNavigator {
 			const expanded = hasChildren && this.#expanded.has(category.id);
 			rows.push({
 				id: category.id,
+				categoryId: category.id,
 				depth: 0,
 				label: category.label,
 				tokens: category.tokens,
@@ -63,6 +65,7 @@ export class TreeNavigator {
 				for (const leaf of category.children) {
 					rows.push({
 						id: leaf.id,
+						categoryId: category.id,
 						depth: 1,
 						label: leaf.label,
 						tokens: leaf.tokens,
@@ -83,11 +86,13 @@ export class TreeNavigator {
 		depth: number,
 		rows: VisibleTreeRow[],
 	): void {
+		const categoryId: CategoryId = "messages";
 		for (const message of messages) {
 			const hasChildren = message.blocks.length > 0;
 			const expanded = hasChildren && this.#expanded.has(message.id);
 			rows.push({
 				id: message.id,
+				categoryId,
 				depth,
 				label: message.label,
 				tokens: message.tokens,
@@ -99,6 +104,7 @@ export class TreeNavigator {
 			for (const block of message.blocks) {
 				rows.push({
 					id: block.id,
+					categoryId,
 					depth: depth + 1,
 					label: block.label,
 					tokens: block.tokens,

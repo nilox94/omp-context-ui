@@ -4,6 +4,7 @@ import type { VisibleTreeRow } from "@/context-tree/tree-navigator";
 
 const baseRow: VisibleTreeRow = {
 	id: "cat:systemPrompt",
+	categoryId: "systemPrompt",
 	depth: 0,
 	label: "System prompt",
 	tokens: 42,

@@ -3,6 +3,11 @@ import { applyBackgroundToLine, type Component } from "@oh-my-pi/pi-tui";
 import { createContextSessionSource } from "../context-session-source";
 import { buildContextTree } from "../context-tree/build-context-tree";
 import { formatVisibleTreeRow } from "../context-tree/format-tree-row";
+import {
+	type Tier,
+	tierForRow,
+	tierThemeColor,
+} from "../context-tree/tier-for-row";
 import { TreeNavigator } from "../context-tree/tree-navigator";
 import type { ContextTree } from "../context-tree/types";
 import { formatContextFooter } from "./category-rollup";
@@ -41,6 +46,23 @@ export function buildContextInspectorSnapshot(
 	};
 }
 
+function styleTreeRow(
+	theme: Theme,
+	line: string,
+	tier: Tier,
+	selected: boolean,
+	treeWidth: number,
+): string {
+	const color = tierThemeColor(tier);
+	const styled = selected
+		? theme.bold(theme.fg(color, line))
+		: theme.fg(color, line);
+	if (!selected) return styled;
+	return applyBackgroundToLine(styled, treeWidth, (text) =>
+		theme.bg("selectedBg", text),
+	);
+}
+
 export function createContextInspectorOverlay(
 	theme: Theme,
 	keybindings: OverlayKeybindings,
@@ -56,7 +78,11 @@ export function createContextInspectorOverlay(
 		return Array.from({ length: treeLineCount }, (_, index) => {
 			if (index !== 0) return "";
 			if (!selected) return theme.fg("dim", "(select a row)");
-			return theme.fg("dim", `${selected.label} · ${selected.tokens} tokens`);
+			const tier = tierForRow(selected.categoryId, selected.tokens);
+			return theme.fg(
+				tierThemeColor(tier),
+				`${selected.label} · ${selected.tokens} tokens`,
+			);
 		});
 	};
 
@@ -93,13 +119,8 @@ export function createContextInspectorOverlay(
 			const treeLines = rows.map((row) => {
 				const selected = row.id === navigator.selectedId;
 				const line = formatVisibleTreeRow(row, selected);
-				if (selected) {
-					const styled = theme.bold(theme.fg("accent", line));
-					return applyBackgroundToLine(styled, treeWidth, (text) =>
-						theme.bg("selectedBg", text),
-					);
-				}
-				return theme.fg("text", line);
+				const tier = tierForRow(row.categoryId, row.tokens);
+				return styleTreeRow(theme, line, tier, selected, treeWidth);
 			});
 			const previewLines = buildPreviewLines(Math.max(treeLines.length, 1));
 
